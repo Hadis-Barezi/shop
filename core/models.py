@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext as _
+from . import managers
 
 
 class BaseModel(models.Model):
@@ -24,6 +25,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['email', 'f_name', 'l_name']
+    objects = managers.UserManager()
 
     def __str__(self):
         return f"{self.f_name} {self.l_name} : {self.phone}"
