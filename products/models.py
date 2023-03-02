@@ -29,6 +29,9 @@ class Brand(BaseModel):
     name = models.CharField(verbose_name=_("Name"), max_length=50, unique=True)
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Discount(BaseModel):
     class Meta:
