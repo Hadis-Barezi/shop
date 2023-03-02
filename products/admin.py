@@ -13,4 +13,14 @@ class CategoryAdmin(admin.ModelAdmin):
 admin_site.register(Category, CategoryAdmin)
 
 
+class BrandAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+    list_filter = ('id', 'name')
+    search_fields = ('id', 'name')
+
+
+# register Brand
+admin_site.register(Brand, BrandAdmin)
+
+
 

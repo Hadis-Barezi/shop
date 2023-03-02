@@ -20,4 +20,11 @@ class Category(BaseModel):
         return f"{self.name}"
 
 
+class Brand(BaseModel):
+    class Meta:
+        ordering = ('name',)
+        verbose_name = _("Brand")
+        verbose_name_plural = _("Brands")
 
+    name = models.CharField(max_length="50", unique=True)
+    description = models.TextField(null=True, blank=True)
