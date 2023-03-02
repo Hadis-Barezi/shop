@@ -1,6 +1,6 @@
 from django.contrib import admin
 from core.admin import admin_site
-from  .models import DiscountTicket
+from .models import DiscountTicket, OrderItem, Order
 
 
 class DiscountTicketAdmin(admin.ModelAdmin):
@@ -12,3 +12,16 @@ class DiscountTicketAdmin(admin.ModelAdmin):
 # register DiscountTicket
 admin_site.register(DiscountTicket, DiscountTicketAdmin)
 
+
+class OrderItemInLine(admin.TabularInline):
+    model = OrderItem
+
+
+class OrderAdmin(admin.ModelAdmin):
+    inlines = [
+        OrderItemInLine,
+    ]
+
+
+# register Order and OrderItem
+admin_site.register(Order, OrderAdmin)
