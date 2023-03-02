@@ -1,6 +1,6 @@
 from django.contrib import admin
 from core.admin import admin_site
-from .models import Category, Brand, Discount
+from .models import Category, Brand, Discount, Product
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -32,6 +32,15 @@ class DiscountAdmin(admin.ModelAdmin):
 # register Discount
 admin_site.register(Discount, DiscountAdmin)
 
+
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'price', 'brand', 'balance')
+    list_filter = ('name',)
+    search_fields = ('id', 'name', 'price')
+
+
+# register Brand
+admin_site.register(Product, ProductAdmin)
 
 
 

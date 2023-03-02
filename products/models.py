@@ -52,4 +52,49 @@ class Discount(BaseModel):
         return bool((self.created_in <= now) and (self.expired_in >= now) and (self.count == -1 or self.count > 0))
 
 
+class Product(BaseModel):
+    class Meta:
+        ordering = ('name',)
+        verbose_name = _("Product")
+        verbose_name_plural = _("Products")
+
+    name = models.CharField(verbose_name=_('name'), max_length=100)
+    price = models.FloatField(verbose_name=_('Price'))
+    brand = models.ForeignKey('Brand', verbose_name=_("Brand"), on_delete=models.DO_NOTHING, related_name="products")
+    category = models.ManyToManyField('Category', verbose_name=_('Category'))
+    description = models.TextField(verbose_name=_('Description'), default='No description')
+    image = models.ImageField(upload_to='products/%Y/%m/%d/', verbose_name=_("image"))
+    # it is assumed that products are countable
+    balance = models.IntegerField(verbose_name=_('Balance'))
+    discount = models.ForeignKey('Discount', verbose_name=_('Discount'), on_delete=models.SET_NULL, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.name}:{self.price}'
+
+    @property
+    def price_after_discount(self):
+        if self.discount and self.discount.is_active():
+            # _discount = Discount.objects.get(id=self.discount.id) # don't need to get
+            if self.discount.type == 'PER':
+                _price = self.price * (1 - self.discount.value)
+            else:
+                _price = self.price - self.discount.value
+        else:
+            _price = self.price
+        return _price
+
+    def check_balance(self, quantity):
+        if quantity < self.balance:
+            return True
+        return False
+
+    def update_balance(self, quantity):
+        if self.check_balance(quantity):
+            self.balance -= quantity
+            self.save()
+            return True
+        return False
+
+
+
 
