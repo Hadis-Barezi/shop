@@ -11,8 +11,8 @@ class BaseModel(models.Model):
 
 class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
-        verbose_name = _("ShopUser")
-        verbose_name_plural = _("ShopUsers")
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
 
     f_name = models.CharField(verbose_name=_("First Name"), max_length=50)
     l_name = models.CharField(verbose_name=_("Last Name"), max_length=100)
