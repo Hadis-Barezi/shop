@@ -30,4 +30,26 @@ class Brand(BaseModel):
     description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
 
 
+class Discount(BaseModel):
+    class Meta:
+        verbose_name = _("Discount")
+        verbose_name_plural = _("Discounts")
+
+    type_choice = [('NUM', 'Numeric'), ('PER', 'Percent')]
+    type = models.CharField(verbose_name=_('Type'), max_length=3, choices=type_choice)
+    created_in = models.DateField(verbose_name=_("Start Date"))
+    expired_in = models.DateField(verbose_name=_("End Date"))
+    # value is an integer for Numeric and a float for Percent
+    value = models.FloatField(verbose_name=_("value"), default=0)
+    # -1 means there is no limit count
+    count = models.IntegerField(verbose_name=_("Count"), default=-1)
+
+    def __str__(self):
+        return f'{self.type}:{self.value}'
+
+    def is_active(self):
+        now = datetime.now().date()
+        return bool((self.created_in <= now) and (self.expired_in >= now) and (self.count == -1 or self.count > 0))
+
+
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from core.admin import admin_site
-from .models import Category, Brand
+from .models import Category, Brand, Discount
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -21,6 +21,17 @@ class BrandAdmin(admin.ModelAdmin):
 
 # register Brand
 admin_site.register(Brand, BrandAdmin)
+
+
+class DiscountAdmin(admin.ModelAdmin):
+    list_display = ('id', 'type', 'value', 'created_in', 'expired_in', 'count')
+    list_filter = ('id', 'type', 'value', 'created_in', 'expired_in', 'count')
+    search_fields = ('id', 'type', 'value', 'created_in', 'expired_in', 'count')
+
+
+# register Discount
+admin_site.register(Discount, DiscountAdmin)
+
 
 
 
