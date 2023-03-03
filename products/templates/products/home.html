@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% include "products/inc/carousel.html" %} <br>
+    <div class="container-fluid">
+        <div class="row m-2">
+            {% for product in products %}
+                <div class="col-md-4 p-2">
+                    <div class="cart h-100">
+                        <a href="#"><img src="{{product.image.url}}" class="card-img rounded-0 " alt="{{product.name}}" style="width: 100%; height: 40vw; object-fit: cover;"></a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{product.name}}</h5>
+                            <P class="card-text">Price: {{product.price}} Rials</P>
+                            {% if product.discount %}
+                                {% if product.discount.is_active %}
+                                    <P class="card-text">Discount: {{product.discount.value}} </P>
+                                {% endif %}
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock content %}
