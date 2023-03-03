@@ -37,3 +37,8 @@ class ShopUserRegisterationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class ShopUserLoginForm(forms.Form):
+    phone = forms.CharField(label='Phone Number', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
