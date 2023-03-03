@@ -7,7 +7,7 @@
                         <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'products:home' %}">Home</a></li>
                          {% if request.user.is_authenticated %}
                             <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">{{request.user.f_name}}'s profile</a></li>
-                            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Log out</a></li>
+                            <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'accounts:logout' %}">Log out</a></li>
                         {% else %}
                             <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'accounts:login' %}">Login</a></li>
                             <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'accounts:register' %}">Register</a></li>

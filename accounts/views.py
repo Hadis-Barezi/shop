@@ -4,7 +4,7 @@ from django.views import View
 from . import forms
 from . import models
 from django.contrib.auth import authenticate, login, logout
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class ShopUserRegister(View):
@@ -68,5 +68,13 @@ class ShopUserLogin(View):
                 return redirect('products:home')
         messages.error(request, "username or password is wrong", 'warning')
         return render(request, template_name=self.template_name, context={'form': form})
+
+
+class ShopUserLogout(LoginRequiredMixin, View):
+    # login_url = "account:login"
+    def get(self, request):
+        logout(request)
+        messages.success(request, f"you logged out successfully.", 'success')
+        return redirect('products:home')
 
 
