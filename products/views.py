@@ -22,3 +22,15 @@ class SubCategory(View):
     def get(self, request, main_cat_id):
         subcategories = self.category_model.objects.filter(main_category=main_cat_id)
         return render(request, template_name=self.template_name, context={'subcategories': subcategories})
+
+
+class CategoryItems(View):
+    template_name = 'products/category_items.html'
+    product_model = models.Product
+    category_model = models.Category
+
+    def get(self, request, sub_cat_id):
+        products = self.product_model.objects.filter(category=sub_cat_id)
+        subcategory = self.category_model.objects.get(id=sub_cat_id)
+        return render(request, template_name=self.template_name, context={'products': products,
+                                                                          'subcategory': subcategory.name})

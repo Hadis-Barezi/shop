@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container-fluid">
+    <h3>{{subcategory}}</h3>
+        <div class="row">
+            {% for product in products %}
+                <div class="col-md-4">
+                    <div class="cart h-100">
+                        <a href="#"><img src="{{product.image.url}}" class="card-img rounded-0 " alt="{{product.name}}" style="width: 100%; height: 40vw; object-fit: cover;"></a>
+                        <div class="card-body">
+                            {% if product.balance %}
+                                <h5 class="card-title">{{product.name}}</h5>
+                                <P class="card-text">Price: {{product.price}}</P>
+                                <P class="card-text">Discount: {% if product.discount.value %}{{product.discount.value}}
+                                    {% else %} 0 {% endif %}</P>
+                            {% else %}
+                                <p>Unavailable</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+{% endblock content %}
