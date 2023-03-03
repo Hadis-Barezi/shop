@@ -13,3 +13,12 @@ class Home(View):
         products = self.product_model.objects.filter(balance__gt=0)[:self.num_home_prod]
 
         return render(request, template_name=self.template_name, context={'products': products})
+
+
+class SubCategory(View):
+    template_name = 'products/subcategories.html'
+    category_model = models.Category
+
+    def get(self, request, main_cat_id):
+        subcategories = self.category_model.objects.filter(main_category=main_cat_id)
+        return render(request, template_name=self.template_name, context={'subcategories': subcategories})

@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    {% for sub in subcategories %}
+        <div class="container-fluid"><a href="#">{{sub.name}}</a></div>
+    {% endfor %}
+{% endblock content %}
