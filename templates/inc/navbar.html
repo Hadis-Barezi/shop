@@ -10,7 +10,7 @@
                             <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Log out</a></li>
                         {% else %}
                             <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Log in</a></li>
-                            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Register</a></li>
+                            <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'accounts:register' %}">Register</a></li>
                         {% endif %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
