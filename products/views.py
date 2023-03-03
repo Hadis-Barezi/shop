@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from . import models
-import random
+from orders import forms
 
 
 class Home(View):
@@ -34,3 +34,13 @@ class CategoryItems(View):
         subcategory = self.category_model.objects.get(id=sub_cat_id)
         return render(request, template_name=self.template_name, context={'products': products,
                                                                           'subcategory': subcategory.name})
+
+
+class ProductDetails(View):
+    template_name = 'products/product_details.html'
+    product_model = models.Product
+    form = forms.CartItemQuantityForm()
+
+    def get(self, request, product_id):
+        product = self.product_model.objects.get(id=product_id)
+        return render(request, template_name=self.template_name, context={'product': product, 'form': self.form})
