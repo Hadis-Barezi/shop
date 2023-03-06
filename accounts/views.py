@@ -78,3 +78,29 @@ class ShopUserLogout(LoginRequiredMixin, View):
         return redirect('products:home')
 
 
+class ShopUserProfile(LoginRequiredMixin, View):
+    template_name = 'accounts/profile.html'
+    user_class = models.ShopUser
+
+    def setup(self, request, *args, **kwargs):
+        try:
+            self.user = get_object_or_404(self.user_class, pk=kwargs['user_id'])
+        except:
+            messages.error(request, f"No user with id ={kwargs['user_id']}.", 'danger')
+            return redirect("products:home")
+        else:
+            self.addresses = self.user.addresses.all()
+            self.orders = self.user.orders.all()
+            return super().setup(request, *args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.id == self.user.id:
+            messages.error(request, f"you are not allowed", 'danger')
+            return redirect('products:home')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, user_id):
+        return render(request, template_name=self.template_name, context={'user': self.user, 'addresses': self.addresses, 'orders': self.orders})
+
+
+

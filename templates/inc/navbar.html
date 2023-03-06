@@ -6,7 +6,7 @@
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                         <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'products:home' %}">Home</a></li>
                          {% if request.user.is_authenticated %}
-                            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">{{request.user.f_name}}'s profile</a></li>
+                            <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'accounts:profile' request.user.id %}">{{request.user.f_name}}'s profile</a></li>
                             <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'accounts:logout' %}">Logout</a></li>
                         {% else %}
                             <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'accounts:login' %}">Login</a></li>
