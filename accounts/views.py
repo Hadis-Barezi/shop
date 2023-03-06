@@ -103,4 +103,37 @@ class ShopUserProfile(LoginRequiredMixin, View):
         return render(request, template_name=self.template_name, context={'user': self.user, 'addresses': self.addresses, 'orders': self.orders})
 
 
+class EditShopUserProfile(LoginRequiredMixin, View):
+    form_class = forms.ShopUserEditeForm
+    user_class = models.ShopUser
+    template_name = 'accounts/edit_profile.html'
+
+    def setup(self, request, *args, **kwargs):
+        try:
+            self.user = get_object_or_404(self.user_class, pk=kwargs['user_id'])
+        except:
+            messages.error(request, f"No user with id ={kwargs['user_id']}.", 'danger')
+            return redirect("products:home")
+        else:
+            return super().setup(request, *args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.id == self.user.id:
+            messages.error(request, f"you are not allowed", 'danger')
+            return redirect('products:home')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(instance=self.user)
+        return render(request, template_name=self.template_name, context={'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, instance=self.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"your profile updated successfully.", 'success')
+            return redirect('accounts:profile', kwargs['user_id'])
+        return render(request, template_name=self.template_name, context={'form': form})
+
+
 

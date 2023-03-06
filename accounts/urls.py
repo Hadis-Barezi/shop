@@ -8,5 +8,6 @@ urlpatterns = [
     path('login/', views.ShopUserLogin.as_view(), name='login'),
     path('logout/', views.ShopUserLogout.as_view(), name='logout'),
     path('user_profile/<int:user_id>/', views.ShopUserProfile.as_view(), name='profile'),
+    path('user_profile/edit/<int:user_id>/', views.EditShopUserProfile.as_view(), name='edit_profile'),
 
 ]

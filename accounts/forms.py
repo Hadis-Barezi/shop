@@ -42,3 +42,18 @@ class ShopUserRegisterationForm(forms.ModelForm):
 class ShopUserLoginForm(forms.Form):
     phone = forms.CharField(label='Phone Number', widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+
+class ShopUserEditeForm(forms.ModelForm):
+    class Meta:
+        model = models.ShopUser
+        fields = ('f_name', 'l_name', 'email', 'phone', 'date_of_birth', 'image')
+        widgets = {
+            'f_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'l_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-control'}),
+        }
+
+
