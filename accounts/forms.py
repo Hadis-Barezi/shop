@@ -75,3 +75,5 @@ class ShopUserChangePasswordForm(forms.ModelForm):
         if cd['new_password'] and cd['confirm_new_password'] and cd['new_password'] != cd['confirm_new_password']:
             raise ValidationError('Confirmation password should be equal to password.')
         return cd['confirm_password']
+
+

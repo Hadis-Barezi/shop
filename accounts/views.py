@@ -163,5 +163,14 @@ class ChangePassword(LoginRequiredMixin, View):
         return render(request, template_name=self.template_name, context={'form': form})
 
 
+class ShopUserAddressList(LoginRequiredMixin, View):
+    address_class = models.Address
+    template_name = 'accounts/address_list.html'
+
+    def get(self, request):
+        addresses = self.address_class.objects.filter(shop_user=request.user.id)
+        return render(request, template_name=self.template_name, context={'addresses': addresses})
+
+
 
 
