@@ -74,3 +74,40 @@ class OrderItem(BaseModel):
 
     def __str__(self):
         return f'{self.product}-{self.quantity}'
+
+
+class TemporaryCart(BaseModel):
+    class Meta:
+        verbose_name = _("Temporary Cart")
+        verbose_name_plural = _("Temporary Carts")
+
+    shop_user = models.ForeignKey('accounts.ShopUser', verbose_name=_("Shop User"), on_delete=models.CASCADE)
+    is_registered = models.BooleanField(default=False, verbose_name=_("Is Registered"))
+    created_in = models.DateField(verbose_name=_("Created In"), auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.id}:{self.shop_user}"
+
+    def total_price(self):
+        return sum([item.total_price() for item in self.items.all()])
+
+
+class CartItem(BaseModel):
+    class Meta:
+        verbose_name = _("Cart Item")
+        verbose_name_plural = _("Cart Items")
+
+    cart = models.ForeignKey('TemporaryCart', verbose_name=_("Cart"), on_delete=models.CASCADE, related_name="items")
+    product = models.ForeignKey('products.Product', verbose_name=_("Product"), on_delete=models.CASCADE)
+    quantity = models.IntegerField(verbose_name=_("Quantity"))
+
+    def total_price(self):
+        return self.quantity * self.product.price_after_discount
+
+    def __str__(self):
+        return f"{self.id}:{self.product}:{self.quantity}"
+
+
+
+
+

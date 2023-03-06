@@ -1,5 +1,5 @@
 {% if item_num > 0 %}
-    <table class="table">
+    <table class="table m-2 p-2">
         <thead>
         <tr>
             <th scope="col">#</th>
@@ -12,15 +12,15 @@
         </tr>
         </thead>
         <tbody>
-            {% for item in cart %}
+            {% for item in items %}
                 <tr>
                     <th scope="row">{{forloop.counter}}</th>
-                    <td>{{item.name}}</td>
+                    <td>{{item.product.name}}</td>
                     <td>{{item.quantity}}</td>
-                    <td>{{item.unit_price}}</td>
-                    <td>{{item.price_after_discount}}</td>
+                    <td>{{item.product.price}}</td>
+                    <td>{{item.product.price_after_discount}}</td>
                     <td>{{item.total_price}}</td>
-                    <td><a href="#"  class="bi bi-x-circle"></a>Delete</td>
+                    <td><a href="#"  class="bi bi-x-circle"></a>Remove</td>
                 </tr>
             {% endfor %}
             <tr>

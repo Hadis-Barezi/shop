@@ -21,7 +21,7 @@ class ShopUserRegister(View):
         return render(request, template_name=self.template_name, context={'form': form})
 
     def post(self, request):
-        form = self.form_class(request.POST)
+        form = self.form_class(request.POST, request.FILE)
         if form.is_valid():
             cd = form.cleaned_data
             user = self.model.objects.create_user(f_name=cd['f_name'], l_name=cd['l_name'], email=cd['email'],
@@ -48,7 +48,7 @@ class ShopUserLogin(View):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect("product:home")
+            return redirect("products:home")
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):

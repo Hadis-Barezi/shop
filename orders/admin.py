@@ -1,6 +1,6 @@
 from django.contrib import admin
 from core.admin import admin_site
-from .models import DiscountTicket, OrderItem, Order
+from .models import DiscountTicket, OrderItem, Order, TemporaryCart, CartItem
 
 
 class DiscountTicketAdmin(admin.ModelAdmin):
@@ -25,3 +25,17 @@ class OrderAdmin(admin.ModelAdmin):
 
 # register Order and OrderItem
 admin_site.register(Order, OrderAdmin)
+
+
+# class CartItemInLine(admin.TabularInline):
+#     model = CartItem
+#
+#
+# class TemporaryCartAdmin(admin.ModelAdmin):
+#     inlines = [
+#         CartItemInLine,
+#     ]
+#
+#
+# # register TemporaryCart and TemporaryCartAdmin
+# admin_site.register(TemporaryCart, TemporaryCartAdmin)

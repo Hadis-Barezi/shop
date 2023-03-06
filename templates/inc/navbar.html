@@ -7,7 +7,7 @@
                         <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'products:home' %}">Home</a></li>
                          {% if request.user.is_authenticated %}
                             <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">{{request.user.f_name}}'s profile</a></li>
-                            <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'accounts:logout' %}">Log out</a></li>
+                            <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'accounts:logout' %}">Logout</a></li>
                         {% else %}
                             <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'accounts:login' %}">Login</a></li>
                             <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'accounts:register' %}">Register</a></li>
@@ -27,12 +27,15 @@
                             </ul>
                         </li>
                     </ul>
-                    <form class="d-flex" action="#">
+                    <form class="d-flex" action="{% url 'orders:cart' %}">
                             <button class="btn btn-outline-dark" type="submit" >
-                                <i class="bi bi-cart4"></i>
+                                <i class="bi bi-cart4">Cart</i>
                                 <span class="badge bg-dark text-white ms-1 rounded-pill">{{item_num}}</span>
                             </button>
                     </form>
+                    <div class="d-flex m-2 p-2">
+                        {% now "j-M-Y-H:i" %}
+                    </div>
                 </div>
             </div>
         </nav>

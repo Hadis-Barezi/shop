@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% include 'order/inc/cart_items.html' %}
-    {% if item_num > 0 %}
-        <a href="{% url 'order:shipping' %}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true" >CONTINUE</a>
+    {% if request.user.is_authenticated %}
+        {% include 'orders/inc/temp_cart_items.html' %}
+    {% else %}
+        {% include 'orders/inc/cart_items.html' %}
+    {% endif %}
+    {% if 1 > 0 %}
+        <a href="{#}" class="btn btn-secondary btn-lg active m-2" role="button" aria-pressed="true" >CONTINUE</a>
     {% endif %}
 {% endblock content %}

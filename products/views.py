@@ -7,7 +7,7 @@ from orders import forms
 class Home(View):
     template_name = 'products/home.html'
     product_model = models.Product
-    num_home_prod = 9
+    num_home_prod = 8
 
     def get(self, request):
         products = self.product_model.objects.filter(balance__gt=0)[:self.num_home_prod]
