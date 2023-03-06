@@ -57,3 +57,21 @@ class ShopUserEditeForm(forms.ModelForm):
         }
 
 
+class ShopUserChangePasswordForm(forms.ModelForm):
+    old_password = forms.CharField(label="Old Password", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password = forms.CharField(label="New Password", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    confirm_new_password = forms.CharField(label="New Password Confirmation", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = models.ShopUser
+        fields = ('old_password', 'new_password', 'confirm_new_password')
+
+    def clean_confirm_password(self):
+        """
+        password and confirm password validation
+
+        """
+        cd = self.cleaned_data
+        if cd['new_password'] and cd['confirm_new_password'] and cd['new_password'] != cd['confirm_new_password']:
+            raise ValidationError('Confirmation password should be equal to password.')
+        return cd['confirm_password']

@@ -12,3 +12,4 @@ class DiscountTicketForm(forms.Form):
         if not self.code:
             return True
         return False
+

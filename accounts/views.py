@@ -136,4 +136,32 @@ class EditShopUserProfile(LoginRequiredMixin, View):
         return render(request, template_name=self.template_name, context={'form': form})
 
 
+class ChangePassword(LoginRequiredMixin, View):
+    form_class = forms.ShopUserChangePasswordForm
+    shop_user_class = models.ShopUser
+    template_name = 'accounts/change_password.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.id == kwargs['user_id']:
+            messages.error(request, f"you are not allowed", 'danger')
+            return redirect('products:home')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self,request, user_id):
+        form = self.form_class()
+        return render(request, template_name=self.template_name, context={'form': form})
+
+    def post(self, request, user_id):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = self.shop_user_class.objects.get(id=user_id)
+            user.change_password(new_password=cd['new_password'], old_password=cd['old_password'])
+            user.save()
+            messages.success(request, "your password change successfully.", "success")
+            return redirect("accounts:profile", user_id)
+        return render(request, template_name=self.template_name, context={'form': form})
+
+
+
 
