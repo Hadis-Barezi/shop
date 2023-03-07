@@ -13,7 +13,7 @@
                       {% if address.more_detail %}
                          <p> More detail: {{address.more_detail}}</p>
                       {% endif %}
-                      <span><a href="#" class="bi bi-pencil-fill" >Edit</a></span>
+                      <span><a href="{% url 'accounts:edit_address' address.id %}" class="bi bi-pencil-fill" >Edit</a></span>
                       <span><a href="#" class="bi bi-trash">Delete</a></span><hr>
                    {% endfor %}
                 {% endif %}

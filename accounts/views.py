@@ -194,5 +194,44 @@ class AddAddress(LoginRequiredMixin, View):
         return render(request, template_name=self.template_name, context={'form': form})
 
 
+class EditAddress(LoginRequiredMixin, View):
+    form_class = forms.CreateUpdateAddressForm
+    address_model = models.Address
+    template_name = 'accounts/edit_address.html'
+
+    def setup(self, request, *args, **kwargs):
+        try:
+            self.address = get_object_or_404(self.address_model, id=kwargs['address_id'])
+        except:
+            messages.error(request, f" address with {kwargs['address_id']} Does not exist!", 'danger')
+            return redirect('accounts:address_list')
+        else:
+            return super().setup(request, *args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.id == self.address.shop_user.id:
+            messages.error(request, f"you are not allowed", 'danger')
+            return redirect('product:home')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(instance=self.address)
+        return render(request, template_name=self.template_name, context={'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            self.address.province = cd['province']
+            self. address.city = cd['city']
+            self.address.street = cd['street'],
+            self.address.postal_code = cd['postal_code']
+            self.address.more_detail = cd['more_detail']
+            self.address.save()
+            messages.success(request, f"your address updated successfully.", 'success')
+            return redirect('accounts:address_list')
+        return render(request, template_name=self.template_name, context={'form': form})
+
+
 
 

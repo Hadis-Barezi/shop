@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-2 border-right">
+                {% include 'accounts/inc/profile-sidebar.html' %}
+            </div>
+            <div class="col m-2">
+                <form action="" method="post" class="form-control">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" value="Edit">
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
