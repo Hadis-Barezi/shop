@@ -13,5 +13,6 @@ urlpatterns = [
     path('user_profile/address_list/', views.ShopUserAddressList.as_view(), name='address_list'),
     path('user_profile/add_address/', views.AddAddress.as_view(), name='add_address'),
     path('user_profile/add_address/<int:address_id>/', views.EditAddress.as_view(), name='edit_address'),
+    path('user_profile/delete_address/<int:address_id>/', views.DeleteAddress.as_view(), name='delete_address'),
 
 ]

@@ -233,5 +233,23 @@ class EditAddress(LoginRequiredMixin, View):
         return render(request, template_name=self.template_name, context={'form': form})
 
 
+class DeleteAddress(LoginRequiredMixin, View):
+    address_model = models.Address
+
+    def setup(self, request, *args, **kwargs):
+        self.address = get_object_or_404(self.address_model, id=kwargs['address_id'])
+        return super().setup(request, *args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.id == self.address.shop_user.id:
+            messages.error(request, f"you are not allowed", 'danger')
+            return redirect('products:home')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        self.address.delete()
+        messages.success(request, f"your address deleted successfully.", 'success')
+        return redirect('accounts:address_list')
+
 
 
