@@ -7,9 +7,8 @@ from .forms import CartItemQuantityForm, DiscountTicketForm
 from . import models
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
-from accounts.models import ShopUser
+from accounts.models import ShopUser, Address
 from django.contrib.auth.mixins import LoginRequiredMixin
-
 
 
 class ShopCart(View):
@@ -85,6 +84,23 @@ class CartItemRemove(View):
             cart = Cart(request)
             cart.item_remove(product_id)
         return redirect("orders:cart")
+
+
+class OrderShipping(LoginRequiredMixin, View):
+    address_model = Address
+    template_name = 'orders/shipping.html'
+    discount_model = models.DiscountTicket
+
+    def get(self, request):
+        """"showing address list"""
+        cart = Cart(request)
+        temp_cart = cart.temp_cart(request)
+        items = temp_cart.items.all()
+        addresses = self.address_model.objects.filter(shop_user=request.user.id)
+        return render(request, template_name=self.template_name, context={'addresses': addresses, 'cart': temp_cart,
+                                                                          'items': items})
+
+
 
 
 

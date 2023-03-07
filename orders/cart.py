@@ -1,3 +1,6 @@
+from . import models
+from accounts.models import ShopUser
+from products.models import Product
 CART_SESSION_ID = 'cart'
 
 
@@ -50,6 +53,22 @@ class Cart:
         if self.__len__() >= 1:
             return True
         return False
+
+    def temp_cart(self, request):
+        """
+        add cart to database after user is authenticated
+        """
+        user = user = ShopUser.objects.get(id=request.user.id)
+        cart = models.TemporaryCart.objects.filter(shop_user=user).get(is_registered=False)
+        for item in self:
+            product_id = int(item['id'])
+            product = Product.objects.get(id=product_id)
+            models.CartItem(cart=cart, product=product, quantity=item['quantity'])
+        self.clear()
+        return cart
+
+
+
 
 
 
