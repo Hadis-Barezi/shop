@@ -15,7 +15,7 @@
                     <label>
                         <input type="radio" name="delivery_address" value="{{address}}" required>{{address}}
                     </label><br>
-                    <a href="#" class="bi bi-pencil-fill" >Edit</a> <hr>
+                    <a href="{% url 'orders:edit_address' address.id %}" class="bi bi-pencil-fill" >Edit</a> <hr>
                 {% endfor %}
                 <label for="code">
                     <input type="text" name="code" value="None" class="form_control">
