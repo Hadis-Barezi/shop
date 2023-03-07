@@ -9,6 +9,7 @@ from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from accounts.models import ShopUser, Address
 from django.contrib.auth.mixins import LoginRequiredMixin
+from accounts.forms import CreateUpdateAddressForm
 
 
 class ShopCart(View):
@@ -94,11 +95,37 @@ class OrderShipping(LoginRequiredMixin, View):
     def get(self, request):
         """"showing address list"""
         cart = Cart(request)
+        print(len(cart))
         temp_cart = cart.temp_cart(request)
+        print(temp_cart)
         items = temp_cart.items.all()
         addresses = self.address_model.objects.filter(shop_user=request.user.id)
+        print(len(cart))
         return render(request, template_name=self.template_name, context={'addresses': addresses, 'cart': temp_cart,
                                                                           'items': items})
+
+
+class AddAddress(LoginRequiredMixin, View):
+    form_class = CreateUpdateAddressForm
+    address_model = Address
+    template_name = 'accounts/new_address.html'
+    user_model = ShopUser
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, template_name=self.template_name, context={'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            new_address = form.save(commit=False)
+            new_address.shop_user = ShopUser.objects.get(id=request.user.id)
+            new_address.save()
+            messages.success(request, f"A new address Added successfully.", 'success')
+            return redirect('orders:shipping')
+        return render(request, template_name=self.template_name, context={'form': form})
+
 
 
 

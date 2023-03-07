@@ -7,7 +7,7 @@
 <div>
     <h3>ADDRESS</h3>
     <div class="col-md border-right m-3">
-         <p><a href="#" class="bi bi-plus-circle-fill">Add New </a></p><br>
+         <p><a href="{% url 'orders:add_address' %}" class="bi bi-plus-circle-fill">Add New </a></p><br>
         {% if addresses %}
             <form action="#" method="POST">
                 {% csrf_token %}
