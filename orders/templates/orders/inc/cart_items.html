@@ -20,7 +20,7 @@
                     <td>{{item.unit_price}}</td>
                     <td>{{item.price_after_discount}}</td>
                     <td>{{item.total_price}}</td>
-                    <td><a href="#"  class="bi bi-x-circle"></a>Delete</td>
+                    <td><a href="{% url 'orders:remove_item' item.id %}"  class="bi bi-x-circle">Remove</a></td>
                 </tr>
             {% endfor %}
             <tr>

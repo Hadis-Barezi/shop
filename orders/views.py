@@ -67,3 +67,24 @@ class AddToCart(View):
             return redirect("products:home")
 
 
+class CartItemRemove(View):
+    """
+    Remove an Item from the Cart.
+    """
+    temp_cart = models.TemporaryCart
+    temp_cart_item = models.CartItem
+    shop_user_model = ShopUser
+
+    def get(self, request, product_id):
+        if request.user and request.user.is_authenticated:
+            user = self.shop_user_model.objects.get(id=request.user.id)
+            cart = self.temp_cart.objects.filter(shop_user=user).get(is_registered=False)
+            cart.items.get(id=product_id).delete()
+            messages.success(request, f"Selected Product removed!", 'success')
+        else:
+            cart = Cart(request)
+            cart.item_remove(product_id)
+        return redirect("orders:cart")
+
+
+
