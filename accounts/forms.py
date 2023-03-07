@@ -77,3 +77,17 @@ class ShopUserChangePasswordForm(forms.ModelForm):
         return cd['confirm_password']
 
 
+class CreateUpdateAddressForm(forms.ModelForm):
+    class Meta:
+        model = models.Address
+        fields = ('province', 'city', 'street', 'postal_code', 'more_detail')
+        widgets = {
+            'province': forms.TextInput(attrs={'class': 'form-control'}),
+            'city': forms.TextInput(attrs={'class': 'form-control'}),
+            'street': forms.TextInput(attrs={'class': 'form-control'}),
+            'postal_code': forms.TextInput(attrs={'class': 'form-control'}),
+            'more_detail': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+
+
+

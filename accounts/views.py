@@ -172,5 +172,27 @@ class ShopUserAddressList(LoginRequiredMixin, View):
         return render(request, template_name=self.template_name, context={'addresses': addresses})
 
 
+class AddAddress(LoginRequiredMixin, View):
+    form_class = forms.CreateUpdateAddressForm
+    address_model = models.Address
+    user_model = models.ShopUser
+    template_name = 'accounts/new_address.html'
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, template_name=self.template_name, context={'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            new_address = form.save(commit=False)
+            new_address.shop_user = self.user_model.objects.get(id=request.user.id)
+            new_address.save()
+            messages.success(request, f"A new address Added successfully.", 'success')
+            return redirect('accounts:address_list')
+        return render(request, template_name=self.template_name, context={'form': form})
+
+
 
 
