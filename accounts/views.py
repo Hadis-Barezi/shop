@@ -83,15 +83,10 @@ class ShopUserProfile(LoginRequiredMixin, View):
     user_class = models.ShopUser
 
     def setup(self, request, *args, **kwargs):
-        try:
-            self.user = get_object_or_404(self.user_class, pk=kwargs['user_id'])
-        except:
-            messages.error(request, f"No user with id ={kwargs['user_id']}.", 'danger')
-            return redirect("products:home")
-        else:
-            self.addresses = self.user.addresses.all()
-            self.orders = self.user.orders.all()
-            return super().setup(request, *args, **kwargs)
+        self.user = get_object_or_404(self.user_class, pk=kwargs['user_id'])
+        self.addresses = self.user.addresses.all()
+        self.orders = self.user.orders.all()
+        return super().setup(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.id == self.user.id:
@@ -109,13 +104,8 @@ class EditShopUserProfile(LoginRequiredMixin, View):
     template_name = 'accounts/edit_profile.html'
 
     def setup(self, request, *args, **kwargs):
-        try:
-            self.user = get_object_or_404(self.user_class, pk=kwargs['user_id'])
-        except:
-            messages.error(request, f"No user with id ={kwargs['user_id']}.", 'danger')
-            return redirect("products:home")
-        else:
-            return super().setup(request, *args, **kwargs)
+        self.user = get_object_or_404(self.user_class, pk=kwargs['user_id'])
+        return super().setup(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.id == self.user.id:
@@ -200,13 +190,8 @@ class EditAddress(LoginRequiredMixin, View):
     template_name = 'accounts/edit_address.html'
 
     def setup(self, request, *args, **kwargs):
-        try:
-            self.address = get_object_or_404(self.address_model, id=kwargs['address_id'])
-        except:
-            messages.error(request, f" address with {kwargs['address_id']} Does not exist!", 'danger')
-            return redirect('accounts:address_list')
-        else:
-            return super().setup(request, *args, **kwargs)
+        self.address = get_object_or_404(self.address_model, id=kwargs['address_id'])
+        return super().setup(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.id == self.address.shop_user.id:
