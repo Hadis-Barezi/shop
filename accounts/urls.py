@@ -1,4 +1,4 @@
-from  django.urls import path
+from  django.urls import path, include
 from . import views
 
 
@@ -15,5 +15,6 @@ urlpatterns = [
     path('user_profile/add_address/<int:address_id>/', views.EditAddress.as_view(), name='edit_address'),
     path('user_profile/delete_address/<int:address_id>/', views.DeleteAddress.as_view(), name='delete_address'),
     path('user_profile/order_list/<int:shop_user_id>/', views.ShopUserOrderList.as_view(), name='order_list'),
+    path('api/v1/', include('accounts.api.v1.urls')),
 
 ]
