@@ -5,6 +5,7 @@ from . import forms
 from . import models
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from orders.models import Order
 
 
 class ShopUserRegister(View):
@@ -235,6 +236,25 @@ class DeleteAddress(LoginRequiredMixin, View):
         self.address.delete()
         messages.success(request, f"your address deleted successfully.", 'success')
         return redirect('accounts:address_list')
+
+
+class ShopUserOrderList(LoginRequiredMixin, View):
+    order_model = Order
+    user_model = models.ShopUser
+    templates_name = 'accounts/shop_user_orders.html'
+
+    def setup(self, request, *args, **kwargs):
+        self.orders = self.order_model.objects.filter(shop_user=kwargs['shop_user_id'])
+        return super().setup(request, *args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.id == kwargs['shop_user_id']:
+            messages.error(request, f"you are not allowed", 'danger')
+            return redirect('products:home')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return render(request, template_name=self.templates_name, context={'orders': self.orders})
 
 
 

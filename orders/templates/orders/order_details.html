@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    <table class="table">
+    <table class="table m-2">
             <thead>
             <tr>
                 <th scope="col">#</th>
@@ -23,6 +23,26 @@
                 </tr>
             {% endfor %}
 
+             <tr>
+                <th scope="row">Discount Value </th>
+                 {% if order.discount_ticket %}
+                    <td>
+                        {{order.discount_ticket.value}}
+                        {% if order.discount_ticket.type == "PER" %}
+                            %
+                        {% else %}
+                            Rials
+                        {% endif %}
+                    </td>
+                 {% else %}
+                    <td>0</td>
+                 {% endif %}
+
+            </tr>
+             <tr>
+                <th scope="row">Tax Rate (%) </th>
+                <td>{{order.tax_rate}}</td>
+            </tr>
              <tr>
                 <th scope="row">Total (+tax) </th>
                 <td>{{order.total_price}} Rials</td>

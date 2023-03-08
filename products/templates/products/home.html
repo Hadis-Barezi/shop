@@ -2,10 +2,10 @@
 {% block content %}
     {% include "products/inc/carousel.html" %} <br>
     <div class="container-fluid">
-        <div class="row m-2">
+        <div class="row m-1">
             {% if products %}
                 {% for product in products %}
-                <div class="col-md-3 p-2">
+                <div class="col-md-3 p-1 m-0">
                     <div class="cart h-100">
                         <a href="{% url 'products:product-details' product.id %}"><img src="{{product.image.url}}" class="card-img rounded-0 " alt="{{product.name}}" style="width: 100%; height: 40vw; object-fit: cover;"></a>
                         <div class="card-body">
@@ -15,9 +15,11 @@
                                 {% if product.discount.is_active %}
                                     <P class="card-text">Discount: {{product.discount.value}} </P>
                                 {% endif %}
+                            {% else %}
+                                     <P class="card-text">Discount: 0 </P>
                             {% endif %}
 
-                        </div>django_migrations
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
