@@ -10,9 +10,12 @@ class Home(View):
     num_home_prod = 8
 
     def get(self, request):
-        products = self.product_model.objects.filter(balance__gt=0)[:self.num_home_prod]
-
-        return render(request, template_name=self.template_name, context={'products': products})
+        try:
+            products = self.product_model.objects.filter(balance__gt=0)[:self.num_home_prod]
+        except:
+            return render(request, template_name=self.template_name, context={'products': None})
+        else:
+            return render(request, template_name=self.template_name, context={'products': products})
 
 
 class SubCategory(View):
