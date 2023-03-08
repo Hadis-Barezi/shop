@@ -80,6 +80,24 @@ class OrderItem(BaseModel):
     def __str__(self):
         return f'{self.product}-{self.quantity}'
 
+    @property
+    def get_price(self):
+        item = OrderItem(order=self.order, product=self.product, quantity=self.quantity, price=0)
+        product = Product.objects.get(id=item.product.id)
+        if product.discount:
+            discount_type = product.discount.type
+            if discount_type == 'PER':
+                _price = product.price * (1 - product.discount.value) * self.quantity
+            else:
+                _price = (product.price - product.discount.value) * self.quantity
+        else:
+            _price = product.price * item.quantity
+        return _price
+
+    def save(self, *args, **kwargs):
+        self.price = self.get_price
+        super(OrderItem, self).save(*args, **kwargs)
+
 
 class TemporaryCart(BaseModel):
     class Meta:
