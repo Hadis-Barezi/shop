@@ -5,7 +5,7 @@
     {% else %}
         {% include 'orders/inc/cart_items.html' %}
     {% endif %}
-    {% if 1 > 0 %}
+    {% if item_num > 0 %}
         <a href="{% url 'orders:shipping' %}" class="btn btn-secondary btn-lg active m-2" role="button" aria-pressed="true" >CONTINUE</a>
     {% endif %}
 {% endblock content %}

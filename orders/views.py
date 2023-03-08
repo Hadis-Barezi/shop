@@ -25,6 +25,7 @@ class ShopCart(View):
                 cart = self.temp_cart.objects.filter(shop_user=user).get(is_registered=False)
             except ObjectDoesNotExist:
                 messages.warning(request, f"cart is Empty", 'warning')
+                return redirect('products:home')
             else:
                 items = self.temp_cart_item.objects.filter(cart=cart)
                 print(items)
@@ -159,6 +160,58 @@ class EditAddress(LoginRequiredMixin, View):
             messages.success(request, f"your address updated successfully.", 'success')
             return redirect('orders:shipping')
         return render(request, template_name=self.template_name, context={'form': form})
+
+
+class OrderCreate(LoginRequiredMixin, View):
+    temp_cart = models.TemporaryCart
+    order_model = models.Order
+    order_item_model = models.OrderItem
+    product_model = Product
+    discount_model = models.DiscountTicket
+    shop_user_model = ShopUser
+
+    def post(self, request):
+        address = request.POST.get('delivery_address')
+        discount_code = request.POST.get('code')
+        user = ShopUser.objects.get(id=request.user.id)
+        try:
+            cart = self.temp_cart.objects.filter(shop_user=user).get(is_registered=False)
+            items = cart.items.all()
+        except:
+            messages.warning(request, f'sorry,there is any cart!', 'warning')
+            return redirect('products:home')
+        else:
+            if len(cart):
+                with transaction.atomic():
+                    order = self.order_model.objects.create(shop_user=user, address=address)
+                    if discount_code != "None":
+                        try:
+                            discount = self.discount_model.objects.get(code=discount_code)
+                            if discount.is_active():
+                                order.discount_ticket = discount
+                                discount.count_update()
+                                order.save()
+                                messages.info(request, 'Discount code applied.', 'info')
+                        except:
+                            messages.warning(request, 'Discount Code in not valid!', 'warning')
+                    for item in items:
+                        # check and update balance
+                        if item.product.update_balance(item.quantity):
+                            order_item = self.order_item_model(order=order, product=item.product, quantity=item.quantity)
+                            order_item.save()
+                        else:
+                            messages.warning(request, f'sorry,{item.product.name} is not available, more!', 'warning')
+                            cart.items.get(id=item.product.id).delete()
+                            return redirect('orders:cart')
+                    total_with_tax = order.get_total_price()
+                    order.save()
+                    cart.items.all().delete()
+                    cart.delete()
+                    messages.success(request, 'Your order was registered successfully.', 'success')
+                    messages.info(request, f'order id: {order.id}', 'info')
+                    return redirect('products:home')
+            messages.warning(request, 'cart is empty.', 'warning')
+            return redirect('products:home')
 
 
 
