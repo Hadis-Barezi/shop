@@ -12,9 +12,6 @@ class ShopUserRegisterAPIView(APIView):
     def post(self, request):
         ser_data = self.serializer_class(data=request.data)
         if ser_data.is_valid():
-            cd = ser_data.validated_data
-            user = self.model.objects.create_user(f_name=cd['f_name'], l_name=cd['l_name'], email=cd['email'],
-                                                  phone=cd['phone'], password=cd['password'])
-
+            ser_data.create(ser_data.validated_data)
             return Response(data=ser_data.data, status=status.HTTP_201_CREATED)
         return Response(data=ser_data.errors, status=status.HTTP_400_BAD_REQUEST)

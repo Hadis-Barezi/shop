@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 
 class ShopUserSerializer(serializers.ModelSerializer):
+    user_model = models.ShopUser
     confirm_password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
@@ -16,3 +17,7 @@ class ShopUserSerializer(serializers.ModelSerializer):
         if data['password'] != data['confirm_password']:
             raise serializers.ValidationError("Password must be equal!")
         return data
+
+    def create(self, validated_data):
+        del(validated_data['confirm_password'])
+        return self.user_model.objects.create_user(**validated_data)
