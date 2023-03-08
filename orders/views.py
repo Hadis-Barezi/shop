@@ -209,12 +209,32 @@ class OrderCreate(LoginRequiredMixin, View):
                     cart.delete()
                     messages.success(request, 'Your order was registered successfully.', 'success')
                     messages.info(request, f'order id: {order.id}', 'info')
-                    return redirect('products:home')
+                    return redirect('orders:order_details', request.user.id, order.id)
             messages.warning(request, 'cart is empty.', 'warning')
             return redirect('products:home')
 
 
+class OrderDetails(LoginRequiredMixin, View):
+    user_model = ShopUser
+    order_model = models.Order
+    template_name = 'orders/order_details.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        user = get_object_or_404(self.user_model, id=kwargs['user_id'])
+        if not request.user.id == user.id:
+            messages.error(request, f"you are not allowed", 'danger')
+            return redirect('products:home')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            order = get_object_or_404(self.order_model, id=kwargs['order_id'])
+            items = order.items.all()
+        except:
+            messages.error(request, f"order with {kwargs['order_id']} not available", 'danger')
+            return redirect('products:home')
+        else:
+            return render(request, template_name=self.template_name, context={'items': items, 'order': order})
 
 
 

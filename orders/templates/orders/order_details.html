@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+    <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Product</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price-with discount (Rials)</th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for item in items %}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{item.product}}</td>
+                    <td>{{item.quantity}}</td>
+                    <td>{{item.price}}</td>
+
+                </tr>
+            {% endfor %}
+
+             <tr>
+                <th scope="row">Total (+tax) </th>
+                <td>{{order.total_price}} Rials</td>
+
+            </tr>
+            <tr>
+                <th scope="row">Delivery Address </th>
+                <td>{{order.address}}</td>
+
+            </tr>
+        </tbody>
+    </table>
+
+{% endblock content %}
+
+
