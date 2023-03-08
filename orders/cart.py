@@ -58,7 +58,8 @@ class Cart:
         """
         add cart to database after user is authenticated
         """
-        cart = models.TemporaryCart.objects.filter(shop_user=request.user.id).get(is_registered=False)
+        user = ShopUser.objects.get(id=request.user.id)
+        cart = models.TemporaryCart.objects.get_or_create(shop_user=user)[0]
         print(cart)
         for item in self:
             product_id = int(item['id'])
