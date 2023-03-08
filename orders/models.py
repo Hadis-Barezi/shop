@@ -28,6 +28,11 @@ class DiscountTicket(BaseModel):
         now = datetime.now().date()
         return bool((self.created_in <= now) and (self.expired_in >= now) and (self.count == -1 or self.count > 0))
 
+    def count_update(self):
+        if self.is_active() and self.count>0:
+            self.count -= 1
+            self.save()
+
 
 class Order(BaseModel):
     class Meta:
@@ -90,6 +95,9 @@ class TemporaryCart(BaseModel):
 
     def total_price(self):
         return sum([item.total_price() for item in self.items.all()])
+
+    def __len__(self):
+        return len(self.items.all())
 
 
 class CartItem(BaseModel):
