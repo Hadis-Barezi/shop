@@ -5,10 +5,12 @@ from . import models
 
 def cart_items(request):
     if request.user.is_authenticated:
-        user = ShopUser.objects.get(id=request.user.id)
-        cart = models.TemporaryCart.objects.filter(shop_user=user).get(is_registered=False)
-        items = cart.items.all()
-        item_num = len(items)
+        try:
+            user = ShopUser.objects.get(id=request.user.id)
+            cart = models.TemporaryCart.objects.filter(shop_user=user).get(is_registered=False)
+            item_num = len(cart)
+        except:
+            item_num = 0
     else:
         cart = Cart(request)
         item_num = len(cart)
