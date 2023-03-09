@@ -39,3 +39,22 @@ class EditProfileAPIView(APIView):
             ser_data.save()
             return Response(data=ser_data.data, status=status.HTTP_200_OK)
         return Response(data=ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePasswordAPIView(APIView):
+    serializer_class = serializers.ChangePasswordSerializer
+    shop_user_class = models.ShopUser
+    permission_classes = [IsAuthenticated, permissions.IsProfileOwner]
+
+    def put(self, request, user_id):
+        user = get_object_or_404(self.shop_user_class, id=user_id)
+        self.check_object_permissions(request, user)
+        ser_data = self.serializer_class(instance=user, data=request.data)
+        if ser_data.is_valid():
+            cd = ser_data.validated_data
+            user.change_password(new_password=cd['new_password'], old_password=cd['password'])
+            user.save()
+            data = {'message': 'your password changed successfully.'}
+            return Response(data=data, status=status.HTTP_200_OK)
+        return Response(data=ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
