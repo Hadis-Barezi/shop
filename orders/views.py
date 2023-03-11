@@ -28,7 +28,6 @@ class ShopCart(View):
                 return redirect('products:home')
             else:
                 items = self.temp_cart_item.objects.filter(cart=cart)
-                print(items)
                 return render(request, template_name=self.template_name, context={'cart': cart, 'items': items})
         else:
             cart = Cart(request)
@@ -57,7 +56,12 @@ class AddToCart(View):
                         with transaction.atomic():
                             user = self.shop_user_model.objects.get(id=request.user.id)
                             cart = self.temp_cart.objects.get_or_create(shop_user=user)
-                            self.temp_cart_item.objects.create(cart=cart[0], product=product, quantity=cd['quantity'])
+                            if cart[0].items.filter(product=product).exists():
+                                item = cart[0].items.get(product=product)
+                                item.quantity = cd['quantity']
+                                item.save()
+                            else:
+                                self.temp_cart_item.objects.create(cart=cart[0], product=product, quantity=cd['quantity'])
                             messages.success(request, f"{product.name} added to the cart.", 'success')
 
                     else:
@@ -75,12 +79,14 @@ class CartItemRemove(View):
     temp_cart = models.TemporaryCart
     temp_cart_item = models.CartItem
     shop_user_model = ShopUser
+    product_model = Product
 
     def get(self, request, product_id):
         if request.user and request.user.is_authenticated:
+            product = get_object_or_404(self.product_model, id=product_id)
             user = self.shop_user_model.objects.get(id=request.user.id)
             cart = self.temp_cart.objects.filter(shop_user=user).get(is_registered=False)
-            cart.items.get(id=product_id).delete()
+            cart.items.get(product=product).delete()
             messages.success(request, f"Selected Product removed!", 'success')
         else:
             cart = Cart(request)

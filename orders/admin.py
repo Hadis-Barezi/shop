@@ -38,4 +38,6 @@ admin_site.register(Order, OrderAdmin)
 #
 #
 # # register TemporaryCart and TemporaryCartAdmin
-# admin_site.register(TemporaryCart, TemporaryCartAdmin)
+admin_site.register(TemporaryCart)
+admin_site.register(CartItem)
+

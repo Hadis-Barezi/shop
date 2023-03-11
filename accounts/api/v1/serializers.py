@@ -46,3 +46,8 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         return data
 
 
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Address
+        # fields = "__all__"
+        exclude = ["shop_user",]
