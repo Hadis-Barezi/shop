@@ -85,9 +85,14 @@ class CartItemRemove(View):
         if request.user and request.user.is_authenticated:
             product = get_object_or_404(self.product_model, id=product_id)
             user = self.shop_user_model.objects.get(id=request.user.id)
-            cart = self.temp_cart.objects.filter(shop_user=user).get(is_registered=False)
-            cart.items.get(product=product).delete()
-            messages.success(request, f"Selected Product removed!", 'success')
+            try:
+                cart = self.temp_cart.objects.filter(shop_user=user).get(is_registered=False)
+                item = cart.items.get(product=product)
+            except:
+                messages.warning(request, f"Selected Product or cart dose not exist!", 'warning')
+            else:
+                item.delete()
+                messages.success(request, f"Selected Product removed!", 'success')
         else:
             cart = Cart(request)
             cart.item_remove(product_id)
