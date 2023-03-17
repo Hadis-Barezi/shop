@@ -60,13 +60,11 @@ class Cart:
         """
         user = ShopUser.objects.get(id=request.user.id)
         cart = models.TemporaryCart.objects.get_or_create(shop_user=user)[0]
-        print(cart)
         for item in self:
             product_id = int(item['id'])
             print(product_id)
             product = Product.objects.get(id=product_id)
             models.CartItem.objects.create(cart=cart, product=product, quantity=item['quantity'])
-            print("****")
         self.clear()
         return cart
 

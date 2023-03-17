@@ -17,3 +17,24 @@ class CartItemSerializer(serializers.ModelSerializer):
 class AddToCartSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
     quantity = serializers.IntegerField()
+
+
+class DiscountTicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.DiscountTicket
+        fields = ['code',]
+
+
+class AddressDiscountSerializer(serializers.Serializer):
+    address_id = serializers.IntegerField()
+    discount_code = serializers.CharField(required=False)
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.OrderItem
+        fields = ['order', 'product', 'quantity', 'price']
+
+
+

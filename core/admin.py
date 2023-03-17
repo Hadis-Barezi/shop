@@ -40,3 +40,5 @@ class MyUserAdmin(UserAdmin):
 
 admin_site.register(User, MyUserAdmin)
 admin_site.register(Group)
+
+

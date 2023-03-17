@@ -113,6 +113,7 @@ class OrderShippingAPIView(APIView):
     address_serializer = AddressSerializer
     discount_serializer = serializers.DiscountTicketSerializer
     address_discount_serializer = serializers.AddressDiscountSerializer
+    temp_cart_class = models.TemporaryCart
     order_model = models.Order
     order_item_model = models.OrderItem
     product_model = Product
@@ -120,57 +121,80 @@ class OrderShippingAPIView(APIView):
     def get(self, request):
         user_cart = cart.Cart(request)
         temp_cart = user_cart.temp_cart(request)
-        cart_items = temp_cart.items.all()
-        addresses = get_list_or_404()
-        cart_ser_data = self.cart_serializer(instance=cart_items, many=True)
-        address_ser_data = self.address_serializer(instance=addresses, many=True)
-        return Response(data={"cart":cart_ser_data, "addresses": address_ser_data})
+        shop_user = self.shop_user_model.objects.get(id=request.user.id)
+        addresses = self.address_model.objects.filter(shop_user=shop_user)
+        if len(temp_cart):
+            cart_items = temp_cart.items.all()
+            cart_ser_data = self.cart_serializer(instance=cart_items, many=True)
+            if addresses:
+                address_ser_data = self.address_serializer(instance=addresses, many=True)
+                return Response(data={"cart": cart_ser_data.data, "addresses": address_ser_data.data},
+                                status=status.HTTP_200_OK)
+            else:
+                return Response(data={"cart": cart_ser_data.data, "addresses": "No Address! Enter an address."},
+                                status=status.HTTP_207_MULTI_STATUS)
+        message = "EMPTY CART"
+        return Response(data={"message": message}, status=status.HTTP_204_NO_CONTENT)
 
-    # def post(self, request):
-    #     ser_data = self.adress_discount_serializer(data=request.data)
-    #     if ser_data.is_valid():
-    #         user = ShopUser.objects.get(id=request.user.id)
-    #         if user.addresses
-    #
-    #         try:
-    #             user_cart = self.temp_cart.objects.filter(shop_user=user).get(is_registered=False)
-    #             items = user_cart.items.all()
-    #         except:
-    #             message = {"messages": "Empty Cart"}
-    #             return Response(data=message, status=status.HTTP_204_NO_CONTENT)
-    #         else:
-    #             if len(user_cart):
-    #                 with transaction.atomic():
-    #                     order = self.order_model.objects.create(shop_user=user, address=str(['address']))
-    #                     if discount_code != "None":
-    #                         try:
-    #                             discount = self.discount_model.objects.get(code=discount_code)
-    #                             if discount.is_active():
-    #                                 order.discount_ticket = discount
-    #                                 discount.count_update()
-    #                                 order.save()
-    #                                 messages.info(request, 'Discount code applied.', 'info')
-    #                         except:
-    #                             messages.warning(request, 'Discount Code in not valid!', 'warning')
-    #                     for item in items:
-    #                         # check and update balance
-    #                         if item.product.update_balance(item.quantity):
-    #                             order_item = self.order_item_model(order=order, product=item.product,
-    #                                                                quantity=item.quantity)
-    #                             order_item.save()
-    #                         else:
-    #                             messages.warning(request, f'sorry,{item.product.name} is not available, more!', 'warning')
-    #                             cart.items.get(id=item.product.id).delete()
-    #                             return redirect('orders:cart')
-    #                     total_with_tax = order.get_total_price()
-    #                     order.save()
-    #                     cart.items.all().delete()
-    #                     cart.delete()
-    #                     messages.success(request, 'Your order was registered successfully.', 'success')
-    #                     messages.info(request, f'order id: {order.id}', 'info')
-    #                     return redirect('orders:order_details', request.user.id, order.id)
-    #             messages.warning(request, 'cart is empty.', 'warning')
-    #             return redirect('products:home')
+    def post(self, request):
+        messages = {"messages":[]}
+        ser_data = self.address_discount_serializer(data=request.data)
+        if ser_data.is_valid():
+            shop_user = self.shop_user_model.objects.get(id=request.user.id)
+            delivery_address = self.address_model.objects.filter(id=ser_data.validated_data["address_id"])
+            discount_code = ser_data.validated_data.get("discount_code")
+            if delivery_address[0].shop_user == shop_user:
+                try:
+                    user_cart = self.temp_cart_class.objects.filter(shop_user=shop_user).get(is_registered=False)
+                    items = user_cart.items.all()
+                except:
+                    message = "Empty Cart"
+                    messages["messages"].append(message)
+                    return Response(data=message, status=status.HTTP_204_NO_CONTENT)
+                else:
+                    if len(user_cart):
+                        with transaction.atomic():
+                            order = self.order_model.objects.create(shop_user=shop_user, address=str(delivery_address))
+                            if discount_code:
+                                try:
+                                    discount = self.discount_model.objects.get(code=discount_code)
+                                    if discount.is_active():
+                                        order.discount_ticket = discount
+                                        discount.count_update()
+                                        order.save()
+                                        message = "Discount code applied."
+                                        messages["messages"].append(message)
+                                    else:
+                                        message = "Discount code expired"
+                                        messages["messages"].append(message)
+                                except:
+                                    message = 'Input discount Code in not valid!'
+                                    messages["messages"].append(message)
+                    for item in items:
+                        # check and update balance
+                        if item.product.update_balance(item.quantity):
+                            order_item = self.order_item_model(order=order, product=item.product,
+                                                               quantity=item.quantity)
+                            order_item.save()
+                        else:
+                            messages = f'sorry,{item.product.name} is not available, more!'
+                            messages["messages"].append(message)
+                            user_cart.items.get(id=item.product.id).delete()
+                            if len(user_cart) == 0:
+                                messages = f'Empty Cart!'
+                                messages["messages"].append(message)
+                                break
+                    total_with_tax = order.get_total_price()
+                    order.save()
+                    user_cart.items.all().delete()
+                    user_cart.delete()
+                    message = f'Your order was registered successfully. ORDER ID: {order.id}'
+                    messages["messages"].append(message)
+            else:
+                message = "Delivery_Address Error!"
+                messages["messages"].append(message)
+            return Response(data=messages, status=status.HTTP_207_MULTI_STATUS)
+        return Response(data=ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class OrderDetailsAPIView(APIView):
